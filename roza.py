@@ -38,6 +38,7 @@ is_replaying = False
 replay_index = 0
 current_level = 0
 
+
 level_difficulties = [
     {'name': 'Easy'},
     {'name': 'Mild'},
@@ -194,8 +195,59 @@ def record_and_apply(action):
         apply_action(recorded)
     else:
         print("In replay mode, actions ignored.")
-        
-        
+
+
+def draw_text(x, y, text, font=GLUT_BITMAP_HELVETICA_18):
+    glColor3fv(TEXT_COLOR)
+    glMatrixMode(GL_PROJECTION)
+    glPushMatrix()
+    glLoadIdentity()
+    win_w = glutGet(GLUT_WINDOW_WIDTH)
+    win_h = glutGet(GLUT_WINDOW_HEIGHT)
+    if win_h > 0:
+        gluOrtho2D(0, win_w, 0, win_h)
+    glMatrixMode(GL_MODELVIEW)
+    glPushMatrix()
+    glLoadIdentity()
+    glRasterPos2f(x, y)
+    for ch in text:
+        glutBitmapCharacter(font, ord(ch))
+    glPopMatrix()
+    glMatrixMode(GL_PROJECTION)
+    glPopMatrix()
+    glMatrixMode(GL_MODELVIEW)
+
+
+def draw_grid_lines():
+    glColor3fv(GRID_LINE_COLOR)
+    glBegin(GL_LINES)
+    half = (GRID_N - 1) * CELL_SPACING / 2.0
+    low = -half - CELL_SPACING / 2.0
+    high = half + CELL_SPACING / 2.0
+    for i in range(GRID_N + 1):
+        pos = low + i * CELL_SPACING
+        glVertex3f(low, 0.0, pos)
+        glVertex3f(high, 0.0, pos)
+        glVertex3f(pos, 0.0, low)
+        glVertex3f(pos, 0.0, high)
+    glEnd()
+
+
+def draw_cube_outline(x, y, z, color):
+    glColor3fv(color)
+    glPushMatrix()
+    glTranslatef(x, y + 0.02, z)
+    glScale(1.05, 1.05, 1.05)
+    s = CUBE_SIZE / 2.0
+    glBegin(GL_LINES)
+    edges = [(-s,-s, s),( s,-s, s),( s,-s,-s),(-s,-s,-s),
+             (-s, s, s),( s, s, s),( s, s,-s),(-s, s,-s)]
+    wire = [(0,1),(1,2),(2,3),(3,0),(4,5),(5,6),(6,7),(7,4),(0,4),(1,5),(2,6),(3,7)]
+    for a,b in wire:
+        glVertex3f(*edges[a]); glVertex3f(*edges[b])
+    glEnd()
+    glPopMatrix()
+    
 def main():
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
