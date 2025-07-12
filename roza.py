@@ -7,7 +7,7 @@ import random
 
 GRID_N = 8
 CUBE_SIZE = 50
-CELL_SPACING = 60
+CELL_SPACING = 70
 WINDOW_W, WINDOW_H = 1000, 800
 COLORS = [
     (0.1, 0.1, 0.1),
